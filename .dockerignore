@@ -1,0 +1,15 @@
+.git/
+.gradle/
+**/build/
+
+.env
+.env.*
+
+.idea/
+.vscode/
+.superpowers/
+docs/
+
+AGENTS.md
+opencode.jsonc
+*.log
