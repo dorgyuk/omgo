@@ -4,6 +4,9 @@ public class Board {
     public static final int SIZE = 15;
     private final Stone[][] board = new Stone[SIZE][SIZE];
     
+    /**
+     * 모든 칸이 Stone.EMPTY인 15x15 배열을 생성한다.
+     */
     public Board() {
         for (int i = 0; i < SIZE; i++) {
             for (int j = 0; j < SIZE; j++) {
@@ -11,6 +14,7 @@ public class Board {
             }
         }
     }
+
     /**
      * 주어진 위치의 돌을 반환한다.
      * 
