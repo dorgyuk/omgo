@@ -64,14 +64,14 @@ public class Board {
         }
 
         // 오목판 복사하기
-        Board copy = new Board();
+        Board boardAfterMove = new Board();
         for (int i = 0; i < SIZE; i++) {
-            copy.board[i] = this.board[i].clone();
+            boardAfterMove.board[i] = this.board[i].clone();
         }
 
         // 착수하기
-        copy.board[position.row()][position.column()] = stone;
+        boardAfterMove.board[position.row()][position.column()] = stone;
 
-        return copy;
+        return boardAfterMove;
     }
 }
