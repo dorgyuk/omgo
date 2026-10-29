@@ -8,15 +8,23 @@ import java.util.Set;
 /**
  * 렌주 규칙에 따라 착수의 승리 및 흑의 금수 여부를 평가한다.
  *
- * <p>흑의 정확한 5목 승리는 장목, 4·4, 3·3 금수보다 우선하며, 백은 5목 이상이면 승리한다.
+ * <p>흑의 정확한 오목 승리는 장목, 4·4, 3·3 금수보다 우선하며, 백은 오목 이상이면 승리한다.
  * 가상 착수에는 새로운 보드를 사용하므로 입력 보드는 변경하지 않는다.
  */
 public class RenjuRuleEvaluator {
+
+    private static final int[][] DIRECTIONS = {
+           {0, 1},
+           {1, 0},
+           {1, 1},
+           {-1, 1}
+        };
+
     /**
      * 착수 전 보드에 돌을 가상 착수하여 승리, 금수 또는 일반 착수로 평가한다.
      *
      * <p>흑은 정확히 5개, 백은 5개 이상의 돌이 연속되면 승리한다.
-     * 흑의 장목, 4·4, 3·3은 금수지만, 정확한 5목 승리를 우선한다.
+     * 흑의 장목, 4·4, 3·3은 금수지만, 정확한 오목 승리를 우선한다.
      * 백에게는 금수가 없으며, 원본 보드는 변경하지 않는다.
      * 
      * @param board 착수 전 보드
@@ -28,23 +36,12 @@ public class RenjuRuleEvaluator {
      *                                  이미 돌이 있는 위치일 경우,
      *                                  돌이 null이거나, EMPTY인 경우
     */
-   public MoveEvaluation evaluate(Board board, Position position, Stone stone) {
-       Board boardAfterMove = board.withStone(position, stone);
-       
-       int[][] directions = {
-           {0, 1},
-           {1, 0},
-           {1, 1},
-           {-1, 1}
-        };
+    public MoveEvaluation evaluate(Board board, Position position, Stone stone) {
+        Board boardAfterMove = board.withStone(position, stone);
         
         // 승리 조건 확인
-        for (int[] direction : directions) {
-            int count = countLine(boardAfterMove, position, stone, direction[0], direction[1]);
-            if ((stone == Stone.BLACK && count == 5) 
-                || (stone == Stone.WHITE && count >= 5)) {
-                return MoveEvaluation.WIN;
-            }
+        if (hasWinningLine(boardAfterMove, position, stone)) {
+            return MoveEvaluation.WIN;
         }
         
         // 백은 금수가 없음
@@ -76,29 +73,27 @@ public class RenjuRuleEvaluator {
      */
     private int countLine (Board boardAfterMove, Position position, Stone stone, int dr, int dc) {
         int count = 1;
+        
+        for (int sign : new int[] {1, -1}) {
+            int signedDr = sign * dr;
+            int signedDc = sign * dc;
 
-        Position cursor = new Position(position.row() + dr, position.column() + dc);
-
-        while(boardAfterMove.contains(cursor) && boardAfterMove.stoneAt(cursor) == stone) {
-            count++;
-            cursor = new Position(cursor.row() + dr, cursor.column() + dc);
+            Position cursor = new Position(position.row() + signedDr, position.column() + signedDc);
+            while(boardAfterMove.contains(cursor) 
+                && boardAfterMove.stoneAt(cursor) == stone) {
+                count++;
+                cursor = new Position(cursor.row() + signedDr, cursor.column() + signedDc);
+            }
         }
-
-        // 반대 방향
-        cursor = new Position(position.row() - dr, position.column() - dc);
-        while(boardAfterMove.contains(cursor) && boardAfterMove.stoneAt(cursor) == stone) {
-            count++;
-            cursor = new Position(cursor.row() - dr, cursor.column() - dc);
-        }
-
+        
         return count;
     }
 
     /**
      * 착수 후 보드에서 지정한 방향으로 판정 대상 흑돌을 포함하는 서로 다른 4의 개수를 센다.
      *
-     * <p>빈칸에 흑돌을 가상 착수하여, 판정 대상 돌을 포함하는 정확한 5목이 완성되는지 확인한다.
-     * 동일한 네 돌을 양 끝에서 5목으로 완성할 수 있어도 하나의 4로 센다.
+     * <p>빈칸에 흑돌을 가상 착수하여, 판정 대상 돌을 포함하는 정확한 오목이 완성되는지 확인한다.
+     * 동일한 네 돌을 양 끝에서 오목으로 완성할 수 있어도 하나의 4로 센다.
      * 
      * @param boardAfterMove 판정 대상 위치에 흑돌이 놓인 착수 후 보드
      * @param position 4의 생성 여부를 판정할 흑돌의 위치
@@ -111,9 +106,9 @@ public class RenjuRuleEvaluator {
     }
 
     /**
-     * 지정한 방향에서 판정 대상 흑돌을 포함하는 4와 각 4를 정확한 5목으로 완성하는 빈칸을 찾는다.
+     * 지정한 방향에서 판정 대상 흑돌을 포함하는 4와 각 4를 정확한 오목으로 완성하는 빈칸을 찾는다.
      *
-     * <p>판정 대상 위치의 앞뒤 4칸 이내에 가상 착수하여 정확한 5목을 확인한다.
+     * <p>판정 대상 위치의 앞뒤 4칸 이내에 가상 착수하여 정확한 오목을 확인한다.
      * 반환 맵의 키는 기존 네 흑돌의 좌표 집합이고, 값은 그 4를 완성하는 착수 위치의 집합이다.
      * 따라서 같은 네 돌을 완성하는 후보들은 하나의 키로 묶이며,
      * 완성 위치가 두 개인 4는 열린 4에 해당한다.
@@ -122,7 +117,7 @@ public class RenjuRuleEvaluator {
      * @param position 4에 포함되어야 하는 흑돌의 위치
      * @param dr 탐색 방향의 행 변화량 (-1, 0, 1 중 하나)
      * @param dc 탐색 방향의 열 변화량 (-1, 0, 1 중 하나)
-     * @return 네 흑돌의 좌표 집합을 키로, 정확한 5목을 완성하는 빈칸의 집합을 값으로 갖는 맵
+     * @return 네 흑돌의 좌표 집합을 키로, 정확한 오목을 완성하는 빈칸의 집합을 값으로 갖는 맵
      */
     private Map<Set<Position>, Set<Position>> findFours(Board boardAfterMove, Position position, int dr, int dc) {
         Map<Set<Position>, Set<Position>> fours = new HashMap<>();
@@ -130,14 +125,16 @@ public class RenjuRuleEvaluator {
         for (int offset = -4; offset <= 4; offset++) {
             Position candidate = new Position(position.row() + dr * offset,
                                               position.column() + dc * offset);
-            if (boardAfterMove.contains(candidate) && boardAfterMove.stoneAt(candidate) == Stone.EMPTY) {
-                Board candidateBoard = boardAfterMove.withStone(candidate, Stone.BLACK);
-                Set<Position> stones = getConnectedStones(candidateBoard, candidate, dr, dc);
+            if (!boardAfterMove.contains(candidate) 
+                || boardAfterMove.stoneAt(candidate) != Stone.EMPTY) {
+                continue;
+            }
+            Board candidateBoard = boardAfterMove.withStone(candidate, Stone.BLACK);
+            Set<Position> stones = getConnectedStones(candidateBoard, candidate, dr, dc);
 
-                if (stones.size() == 5 && stones.contains(position)) {
-                    stones.remove(candidate);
-                    fours.computeIfAbsent(stones,  key -> new HashSet<>()).add(candidate);
-                }
+            if (stones.size() == 5 && stones.contains(position)) {
+                stones.remove(candidate);
+                fours.computeIfAbsent(stones,  key -> new HashSet<>()).add(candidate);
             }
         }
 
@@ -148,7 +145,7 @@ public class RenjuRuleEvaluator {
      * 지정한 방향에서 판정 대상 흑돌을 포함하는 서로 다른 유효한 3의 개수를 센다.
      *
      * <p>한 돌을 추가해 원래의 세 돌을 포함하는 열린 4를 만들 수 있어야 한다.
-     * 이 확장 착수가 동시에 정확한 5목을 만들거나 금수가 되면 해당 후보를 제외한다.
+     * 이 확장 착수가 동시에 정확한 오목을 만들거나 금수가 되면 해당 후보를 제외한다.
      * 다른 유효한 확장 후보가 하나라도 있으면 그 3은 인정하며,
      * 같은 세 돌은 여러 후보로 확장할 수 있어도 한 번만 센다.
      *
@@ -166,27 +163,32 @@ public class RenjuRuleEvaluator {
         for (int offset = -3; offset <= 3; offset++) {
             Position candidate = new Position(position.row() + dr * offset,
                                               position.column() + dc * offset);
-            if (boardAfterMove.contains(candidate) && boardAfterMove.stoneAt(candidate) == Stone.EMPTY) {
-                Board candidateBoard = boardAfterMove.withStone(candidate, Stone.BLACK);
-                Map<Set<Position>, Set<Position>> fours = findFours(candidateBoard, candidate, dr, dc);
-                
-                for (Map.Entry<Set<Position>, Set<Position>> entry : fours.entrySet()) {
-                    Set<Position> stones = entry.getKey();
-                    Set<Position> winningMoves = entry.getValue();
+            if (!boardAfterMove.contains(candidate) 
+                || boardAfterMove.stoneAt(candidate) != Stone.EMPTY) {
+                continue;
+            }
+            Board candidateBoard = boardAfterMove.withStone(candidate, Stone.BLACK);
+            Map<Set<Position>, Set<Position>> fours = findFours(candidateBoard, candidate, dr, dc);
+            
+            for (Map.Entry<Set<Position>, Set<Position>> entry : fours.entrySet()) {
+                Set<Position> fourStones = entry.getKey();
+                Set<Position> winningMoves = entry.getValue();
 
-                    // 열린 4면 threes에 후보를 제외한 돌들 추가
-                    if (winningMoves.size() == 2 
-                        && stones.contains(position) 
-                        && !didAttainFive(candidateBoard, candidate) 
-                        && !isForbiddenMove(candidateBoard, candidate)) {
-                        Set<Position> three = new HashSet<>(stones);
-                        three.remove(candidate);
-                        threes.add(three);
-                    }
-
+                // 열린 4를 만들 수 없거나 착수한 돌을 포함하고 있지 않으면 3에서 제외 
+                if (winningMoves.size() != 2 || !fourStones.contains(position)) {
+                    continue;
                 }
+                // 확장 착수가 오목을 완성시킬 수 있거나 금수면 해당 후보 제외
+                if (hasWinningLine(candidateBoard, candidate, Stone.BLACK)
+                    || isForbiddenMove(candidateBoard, candidate)) {
+                    continue;
+                }
+                Set<Position> threeStones = new HashSet<>(fourStones);
+                threeStones.remove(candidate);
+                threes.add(threeStones);
             }
         }
+
         return threes.size();
     }
 
@@ -194,24 +196,17 @@ public class RenjuRuleEvaluator {
      * 흑의 착수 위치를 중심으로 네 방향의 장목, 4·4, 금수 3·3 여부를 확인한다.
      *
      * <p>판정 위치에는 이미 흑돌이 놓여 있어야 한다.
-     * 어느 방향이든 정확한 5목이 있으면 다른 금수 형태와 관계없이 {@code false}를 반환한다.
-     * 정확한 5목이 없으면 장목, 서로 다른 4의 합계, 유효한 3의 합계 순으로 검사한다.
+     * 어느 방향이든 정확한 오목이 있으면 다른 금수 형태와 관계없이 {@code false}를 반환한다.
+     * 정확한 오목이 없으면 장목, 서로 다른 4의 합계, 유효한 3의 합계 순으로 검사한다.
      * 유효한 3의 개수는 {@link #countThrees(Board, Position, int, int)}로 재귀적으로 확인한다.
      *
      * @param boardAfterMove 판정 위치에 흑돌이 놓인 착수 후 보드
      * @param position 금수 여부를 판정할 흑돌의 위치
-     * @return 금수이면 {@code true}, 정확한 5목이 있거나 금수가 아니면 {@code false}
+     * @return 금수이면 {@code true}, 정확한 오목이 있거나 금수가 아니면 {@code false}
      */
     private boolean isForbiddenMove(Board boardAfterMove, Position position) {
-        int[][] directions = {
-            {0, 1},
-            {1, 0},
-            {1, 1},
-            {-1, 1}
-        };
-        
         boolean hasOverline = false;
-        for(int[] direction : directions) {
+        for(int[] direction : DIRECTIONS) {
             int count = countLine(boardAfterMove, position, Stone.BLACK, direction[0], direction[1]);
             
             // 장목 체크
@@ -226,43 +221,42 @@ public class RenjuRuleEvaluator {
         }
         
         // 4·4 금수 확인
-        int fours = 0;
-        for(int[] direction : directions) {
-            fours += countFours(boardAfterMove, position, direction[0], direction[1]);
-            if (fours >= 2) return true;
+        int fourCount = 0;
+        for(int[] direction : DIRECTIONS) {
+            fourCount += countFours(boardAfterMove, position, direction[0], direction[1]);
+            if (fourCount >= 2) return true;
         }
         
         // 3·3 금수 확인
-        int threes = 0;
-        for(int[] direction : directions) {
-            threes += countThrees(boardAfterMove, position, direction[0], direction[1]);
-            if (threes >= 2) return true;
+        int threeCount = 0;
+        for(int[] direction : DIRECTIONS) {
+            threeCount += countThrees(boardAfterMove, position, direction[0], direction[1]);
+            if (threeCount >= 2) return true;
         }
         
         return false;        
     }
 
     /**
-     * 지정한 흑돌을 포함하는 정확한 5목이 네 방향 중 하나라도 있는지 확인한다.
+     * 지정한 위치를 중심으로 네 방향을 검사하여 해당 색의 승리 조건 충족 여부를 확인한다.
      *
-     * <p>판정 위치에는 이미 흑돌이 놓여 있어야 하며, 장목은 5목으로 인정하지 않는다.
-     * 3을 열린 4로 만드는 확장 착수가 동시에 5목을 만드는지 확인할 때 사용한다.
+     * <p>판정 위치에는 이미 해당 색의 돌이 놓여 있어야 한다.
+     * 중심 돌을 포함하여 흑은 정확히 5개, 백은 5개 이상이 연속되면 승리 조건을 만족한다.
+     * 실제 착수의 승리 여부와 흑의 3을 열린 4로 만드는 확장 착수의 동시 오목 생성 여부를 확인할 때 사용한다.
      *
-     * @param boardAfterMove 판정 위치에 흑돌이 놓인 착수 후 보드
-     * @param position 정확한 5목에 포함되어야 하는 흑돌의 위치
-     * @return 어느 방향이든 정확히 5개가 연속되면 {@code true}, 그 외에는 {@code false}
+     * @param boardAfterMove 판정 위치에 해당 색의 돌이 놓인 착수 후 보드
+     * @param position 승리 조건을 판정할 중심 돌의 위치
+     * @param stone 승리 조건을 판정할 돌의 색깔 (흑은 정확히 오목, 백은 오목 이상)
+     * @return 어느 방향이든 해당 색의 승리 조건을 만족하면 {@code true}, 그 외에는 {@code false}
      */
-    private boolean didAttainFive(Board boardAfterMove, Position position) {
-        int[][] directions = {
-           {0, 1},
-           {1, 0},
-           {1, 1},
-           {-1, 1}
-        };
-
-        for(int[] direction : directions) {
-            int count = countLine(boardAfterMove, position, Stone.BLACK, direction[0], direction[1]);
-            if (count == 5) return true;
+    private boolean hasWinningLine(Board boardAfterMove, Position position, Stone stone) {
+        for(int[] direction : DIRECTIONS) {
+            int count = countLine(boardAfterMove, position, stone, direction[0], direction[1]);
+            if (stone == Stone.BLACK && count == 5) {
+                return true;
+            } else if (stone == Stone.WHITE && count >= 5) {
+                return true;
+            }
             
         }
         return false;
@@ -286,13 +280,13 @@ public class RenjuRuleEvaluator {
         stones.add(candidate);
         
         for (int sign : new int[] {1, -1}) {
-            int stepR = sign * dr;
-            int stepC = sign * dc;
+            int signedDr = sign * dr;
+            int signedDc = sign * dc;
             
-            Position cursor = new Position(candidate.row() + stepR, candidate.column() + stepC);
+            Position cursor = new Position(candidate.row() + signedDr, candidate.column() + signedDc);
             while(candidateBoard.contains(cursor) && candidateBoard.stoneAt(cursor) == Stone.BLACK) {
                 stones.add(cursor);
-                cursor = new Position(cursor.row() + stepR, cursor.column() + stepC);
+                cursor = new Position(cursor.row() + signedDr, cursor.column() + signedDc);
             }
         }
 
