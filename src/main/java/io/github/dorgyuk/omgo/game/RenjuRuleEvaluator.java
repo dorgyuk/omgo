@@ -21,17 +21,20 @@ public class RenjuRuleEvaluator {
         };
 
     /**
-     * 착수 전 보드에 돌을 가상 착수하여 승리, 금수 또는 일반 착수로 평가한다.
+     * 착수 전 보드에 돌을 가상 착수하여 승리, 금수, 무승부 또는 일반 착수로 평가한다.
      *
      * <p>흑은 정확히 5개, 백은 5개 이상의 돌이 연속되면 승리한다.
      * 흑의 장목, 4·4, 3·3은 금수지만, 정확한 오목 승리를 우선한다.
+     * 승리와 흑의 금수 여부를 먼저 확인하고, 둘 다 해당하지 않으면서
+     * 착수 후 보드에 빈칸이 없으면 무승부로 판정한다.
      * 백에게는 금수가 없으며, 원본 보드는 변경하지 않는다.
      * 
      * @param board 착수 전 보드
      * @param position 착수할 위치
      * @param stone 놓을 돌의 색깔
-     * @return 승리하면 {@link MoveEvaluation#WIN}, 흑의 금수이면
-     *         {@link MoveEvaluation#FORBIDDEN}, 그 외에는 {@link MoveEvaluation#LEGAL}
+     * @return 승리하면 {@link MoveEvaluation#WIN}, 승리가 아닌 흑의 금수이면
+     *         {@link MoveEvaluation#FORBIDDEN}, 승리와 금수가 아니면서 보드가 가득 차면
+     *         {@link MoveEvaluation#DRAW}, 나머지는 {@link MoveEvaluation#LEGAL}
      * @throws IllegalArgumentException 위치가 null이거나, 보드 범위를 벗어날 경우,
      *                                  이미 돌이 있는 위치일 경우,
      *                                  돌이 null이거나, EMPTY인 경우
@@ -44,16 +47,16 @@ public class RenjuRuleEvaluator {
             return MoveEvaluation.WIN;
         }
         
-        // 백은 금수가 없음
-        if (stone == Stone.WHITE) {
-            return MoveEvaluation.LEGAL;
-        }
-        
         // 흑 금수 확인
-        if (isForbiddenMove(boardAfterMove, position)) {
+        if (stone == Stone.BLACK && isForbiddenMove(boardAfterMove, position)) {
             return MoveEvaluation.FORBIDDEN;
         }
         
+        // 무승부 확인
+        if (boardAfterMove.isFull()) {
+            return MoveEvaluation.DRAW;
+        }
+
         return MoveEvaluation.LEGAL;
     }
     

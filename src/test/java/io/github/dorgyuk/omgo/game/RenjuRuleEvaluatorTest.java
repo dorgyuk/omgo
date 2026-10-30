@@ -620,4 +620,88 @@ public class RenjuRuleEvaluatorTest {
         // 검증: 유일한 확장 후보가 금수 3·3이므로 원래의 가로 3은 유효하지 않다.
         assertEquals(0, actual);
     }
+
+    @Test
+    void evaluate는_승리나_금수_없이_마지막_칸을_채우면_DRAW를_반환해야_함() {
+        RenjuRuleEvaluator evaluator = new RenjuRuleEvaluator();
+        Position lastPosition = new Position(Board.SIZE - 1, Board.SIZE - 1);
+
+        for (Stone lastStone : new Stone[]{Stone.BLACK, Stone.WHITE}) {
+            Board board = new Board();
+            for (int row = 0; row < Board.SIZE; row++) {
+                for (int column = 0; column < Board.SIZE; column++) {
+                    Position position = new Position(row, column);
+                    if (position.equals(lastPosition)) {
+                        continue;
+                    }
+                    // 네 방향 모두 같은 색이 최대 두 개만 연속되는 배치다.
+                    Stone stone = (row + 2 * column) % 4 < 2 ? Stone.BLACK : Stone.WHITE;
+                    board = board.withStone(position, stone);
+                }
+            }
+
+            MoveEvaluation actual = evaluator.evaluate(board, lastPosition, lastStone);
+
+            assertEquals(MoveEvaluation.DRAW, actual, "마지막 착수 색: " + lastStone);
+            assertEquals(Stone.EMPTY, board.stoneAt(lastPosition));
+        }
+    }
+
+    @Test
+    void evaluate는_마지막_칸에서_정확한_오목을_완성하면_DRAW보다_WIN을_우선해야_함() {
+        RenjuRuleEvaluator evaluator = new RenjuRuleEvaluator();
+        Position lastPosition = new Position(Board.SIZE - 1, Board.SIZE - 1);
+        Board board = new Board();
+        for (int row = 0; row < Board.SIZE; row++) {
+            for (int column = 0; column < Board.SIZE; column++) {
+                Position position = new Position(row, column);
+                if (position.equals(lastPosition)) {
+                    continue;
+                }
+                Stone stone = (row + 2 * column) % 4 < 2 ? Stone.BLACK : Stone.WHITE;
+                // 마지막 행의 10~13열을 흑으로 채우고, 9열은 백으로 막는다.
+                if (row == Board.SIZE - 1 && column >= Board.SIZE - 5) {
+                    stone = Stone.BLACK;
+                } else if (row == Board.SIZE - 1 && column == Board.SIZE - 6) {
+                    stone = Stone.WHITE;
+                }
+                board = board.withStone(position, stone);
+            }
+        }
+
+        MoveEvaluation actual = evaluator.evaluate(board, lastPosition, Stone.BLACK);
+
+        assertEquals(MoveEvaluation.WIN, actual);
+    }
+
+    @Test
+    void evaluate는_마지막_칸에서_장목을_만들면_DRAW보다_FORBIDDEN을_우선해야_함() {
+        RenjuRuleEvaluator evaluator = new RenjuRuleEvaluator();
+        Position lastPosition = new Position(Board.SIZE - 1, Board.SIZE - 1);
+        Board board = new Board();
+        for (int row = 0; row < Board.SIZE; row++) {
+            for (int column = 0; column < Board.SIZE; column++) {
+                Position position = new Position(row, column);
+                if (position.equals(lastPosition)) {
+                    continue;
+                }
+                Stone stone = (row + 2 * column) % 4 < 2 ? Stone.BLACK : Stone.WHITE;
+                if (row == Board.SIZE - 1 && column >= Board.SIZE - 6) {
+                    stone = Stone.BLACK;
+                }
+                // 착수 전에는 오목이 없고, 마지막 착수로 3+2개의 흑돌을 연결해 육목이 된다.
+                if (row == Board.SIZE - 1 && column == Board.SIZE - 3) {
+                    continue;
+                }
+                board = board.withStone(position, stone);
+            }
+        }
+        // 오른쪽 끝은 미리 채우고, 두 흑돌 묶음 사이를 마지막 빈칸으로 사용한다.
+        board = board.withStone(lastPosition, Stone.BLACK);
+        Position gapPosition = new Position(Board.SIZE - 1, Board.SIZE - 3);
+
+        MoveEvaluation actual = evaluator.evaluate(board, gapPosition, Stone.BLACK);
+
+        assertEquals(MoveEvaluation.FORBIDDEN, actual);
+    }
 }

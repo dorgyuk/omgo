@@ -180,4 +180,27 @@ public class BoardTest {
             IllegalArgumentException.class,
             () -> board.withStone(new Position(7, 7), Stone.EMPTY));
     }
+
+    @Test
+    void isFull은_마지막_빈칸에_착수하기_전에는_false_착수한_새_보드에서는_true를_반환해야_함() {
+        // 준비: 탐색의 마지막 칸만 비워 둔다.
+        Board board = new Board();
+        Position lastEmptyPosition = new Position(Board.SIZE - 1, Board.SIZE - 1);
+        for (int row = 0; row < Board.SIZE; row++) {
+            for (int column = 0; column < Board.SIZE; column++) {
+                Position position = new Position(row, column);
+                if (!position.equals(lastEmptyPosition)) {
+                    board = board.withStone(position, Stone.BLACK);
+                }
+            }
+        }
+
+        // 실행 및 검증: 한 칸이라도 비어 있으면 가득 찬 보드가 아니다.
+        assertFalse(board.isFull());
+
+        Board boardAfterMove = board.withStone(lastEmptyPosition, Stone.WHITE);
+
+        assertTrue(boardAfterMove.isFull());
+        assertFalse(board.isFull());
+    }
 }
