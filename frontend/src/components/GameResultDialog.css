@@ -1,0 +1,13 @@
+.result-dialog .result-summary { padding: 30px 18px; }
+.result-dialog .result-summary p { line-height: 1.8; word-break: keep-all; }
+.result-summary.result-loss { background: #f1e9e3; }
+.result-summary.result-loss strong { color: #8b5847; }
+.result-summary.result-draw, .result-summary.result-void { background: #f0ece5; }
+.result-summary.result-draw strong, .result-summary.result-void strong { color: var(--muted); }
+.result-dialog .dialog-actions > * { flex: 1; }
+.result-dialog .dialog-actions a { display: inline-flex; align-items: center; justify-content: center; text-decoration: none; }
+.action-panel.game-ended-actions { flex-wrap: wrap; }
+.game-ended-actions .game-result-button { flex-basis: 100%; }
+.game-ended-actions .game-lobby-link { display: flex; align-items: center; justify-content: center; flex-basis: 100%; text-decoration: none; }
+.action-panel button:disabled { opacity: .5; cursor: not-allowed; }
+.turn-banner.game-ended-banner { background: #f0ece5; color: var(--muted); }

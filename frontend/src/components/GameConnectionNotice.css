@@ -1,0 +1,20 @@
+.connection-notice { display: flex; align-items: center; justify-content: space-between; gap: 24px; margin-bottom: 20px; padding: 20px 24px; border: 1px solid #dfcaa9; border-radius: 12px; background: #f6eddd; }
+.connection-message { min-width: 0; }
+.connection-message h2 { margin: 0 0 8px; font-size: 16px; letter-spacing: -.5px; }
+.connection-message p { color: var(--muted); font-size: 12px; line-height: 1.8; word-break: keep-all; }
+.connection-message .connection-time-note { margin-top: 7px; color: #87633a; font-size: 11px; }
+.connection-details { display: flex; align-items: center; gap: 18px; flex-shrink: 0; }
+.connection-countdown { text-align: right; }
+.connection-countdown span { display: block; font-size: 10px; color: var(--muted); }
+.connection-countdown strong { display: block; margin-top: 4px; font-size: 27px; font-weight: 650; color: #87633a; font-variant-numeric: tabular-nums; }
+.connection-countdown small { margin-left: 4px; font-size: 12px; font-weight: 400; }
+.connection-details button:disabled { cursor: not-allowed; opacity: .55; }
+.connection-syncing { border-color: var(--border); background: var(--accent-soft); }
+.connection-syncing .connection-time-note { color: var(--accent); }
+.player-connection-label { display: block; margin-top: 6px; font-size: 10px; color: #87633a; }
+.chat-input-row input:disabled { opacity: .65; cursor: not-allowed; }
+@media (max-width: 639px) {
+  .connection-notice { align-items: stretch; flex-direction: column; gap: 14px; margin-bottom: 16px; padding: 18px; }
+  .connection-details { justify-content: space-between; }
+  .connection-countdown { text-align: left; }
+}

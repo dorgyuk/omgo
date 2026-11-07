@@ -1,0 +1,25 @@
+.signin-main { padding: 48px 16px 64px; }
+.signin-card { width: min(100%, 460px); margin-inline: auto; padding: 36px; border: 1px solid var(--border); border-radius: 16px; background: var(--panel); box-shadow: 0 12px 40px #49392a05; }
+.signin-heading { text-align: center; margin-bottom: 28px; }
+.signin-heading h1 { margin: 18px 0 10px; font-size: 25px; letter-spacing: -1px; word-break: keep-all; }
+.signin-heading p { font-size: 13px; color: var(--muted); }
+.signin-google { display: flex; align-items: center; justify-content: center; gap: 12px; min-height: 48px; width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; background: var(--panel); color: var(--ink); font-size: 13px; }
+.signin-divider { display: flex; align-items: center; gap: 14px; margin: 25px 0; color: var(--muted); font-size: 10px; }
+.signin-divider::before, .signin-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.signin-form { display: grid; gap: 19px; }
+.signin-field { display: grid; gap: 8px; }
+.signin-field label { font-size: 12px; font-weight: 600; }
+.signin-field input { width: 100%; min-width: 0; min-height: 46px; border: 1px solid var(--border); border-radius: 7px; padding: 12px; background: var(--panel); color: var(--ink); font: inherit; font-size: 14px; }
+.signin-field input::placeholder { color: #a29789; font-size: 12px; }
+.signin-submit { min-height: 48px; margin-top: 5px; font-size: 14px; font-weight: 600; }
+.signin-submit:hover { filter: brightness(.95); }
+.signin-submit-message { padding: 12px; border-radius: 7px; background: var(--accent-soft); color: var(--accent); font-size: 11px; line-height: 1.7; overflow-wrap: anywhere; }
+.signin-signup { display: flex; align-items: center; justify-content: center; gap: 9px; margin-top: 22px; font-size: 12px; color: var(--muted); }
+.signin-signup a { display: inline-flex; align-items: center; min-height: 36px; padding: 6px 2px; color: var(--accent); font-size: 12px; font-weight: 600; text-decoration: none; }
+.signin-signup a:hover { text-decoration: underline; }
+@media (max-width: 639px) {
+  .signin-main { padding: 24px 16px 40px; }
+  .signin-card { padding: 28px 22px; }
+  .signin-heading h1 { font-size: 23px; }
+  .signin-field input { font-size: 16px; }
+}

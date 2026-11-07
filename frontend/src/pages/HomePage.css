@@ -1,0 +1,58 @@
+.header-account { margin-left: auto; display: flex; align-items: center; gap: 9px; font-size: 13px; font-weight: 600; }
+.account-avatar, .home-profile-avatar { display: grid; place-items: center; border-radius: 50%; background: var(--accent-soft); color: var(--accent); }
+.account-avatar { width: 32px; height: 32px; font-size: 12px; }
+.header-login { display: inline-flex; align-items: center; min-height: 36px; padding: 7px 16px; border: 1px solid var(--border); border-radius: 7px; background: transparent; color: var(--muted); font-size: 12px; text-decoration: none; }
+.home-main { max-width: 1160px; margin-inline: auto; padding: 64px clamp(16px, 2.5vw, 32px) 28px; }
+.home-hero { display: grid; grid-template-columns: 1.2fr 1fr; align-items: center; gap: 48px; padding: 12px 20px 58px; }
+.home-kicker { font-size: 12px; font-weight: 600; color: var(--accent); }
+.home-intro h1 { margin: 20px 0; font-size: clamp(32px, 4.2vw, 50px); font-weight: 750; line-height: 1.35; letter-spacing: -2px; }
+.home-description { color: var(--muted); font-size: 14px; line-height: 1.9; word-break: keep-all; }
+.home-board-art { justify-self: center; width: min(100%, 310px); padding: 25px; border: 1px solid #cda36d; border-radius: 18px; background: var(--board); box-shadow: 10px 16px 0 #49392a08, 0 20px 50px #49392a0a; transform: rotate(-5deg); }
+.home-art-grid { position: relative; aspect-ratio: 1; background-image: linear-gradient(to right, #80633f66 1px, transparent 1px), linear-gradient(to bottom, #80633f66 1px, transparent 1px); background-size: 12.5% 12.5%; border-right: 1px solid #80633f66; border-bottom: 1px solid #80633f66; }
+.home-art-stone { position: absolute; width: 10.5%; aspect-ratio: 1; border-radius: 50%; transform: translate(-50%, -50%); box-shadow: 2px 3px 4px #0003; }
+.home-art-stone.black { background: radial-gradient(circle at 35% 30%, #454943, #202521); }
+.home-art-stone.white { background: radial-gradient(circle at 35% 30%, #fffefa, #e2ded3); border: 1px solid #c9bda7; }
+.home-art-next { position: absolute; left: 25%; top: 25%; width: 10.5%; aspect-ratio: 1; border: 1px dashed #49392a88; border-radius: 50%; transform: translate(-50%, -50%); }
+.home-lobby { display: grid; grid-template-columns: 1.2fr 1fr; gap: 24px; }
+.home-play-card, .home-profile-card { min-width: 0; padding: 30px; border: 1px solid var(--border); border-radius: 14px; background: var(--panel); }
+.home-play-card { border-top: 3px solid var(--accent); }
+.home-card-heading { display: flex; align-items: center; justify-content: space-between; }
+.home-section-label { font-size: 10px; font-weight: 700; letter-spacing: 1.8px; color: var(--accent); }
+.home-card-symbol { font-size: 16px; letter-spacing: 3px; color: var(--accent); }
+.home-play-card h2 { margin: 19px 0 10px; font-size: 23px; letter-spacing: -.9px; }
+.home-play-card > p, .home-profile-description { font-size: 12px; color: var(--muted); line-height: 1.9; word-break: keep-all; }
+.home-play-button { display: flex; align-items: center; justify-content: center; gap: 16px; width: 100%; margin-top: 26px; min-height: 50px; font-size: 14px; font-weight: 600; text-decoration: none; }
+.home-play-button > span { font-size: 18px; }
+.home-play-button:not(:disabled):hover { filter: brightness(.95); }
+.home-guest-title { margin: 24px 0 12px; font-size: 19px; letter-spacing: -.6px; }
+.home-empty-records { display: flex; gap: 30px; margin-top: 28px; color: #a69b8d; font-size: 14px; }
+.home-profile-heading { display: flex; align-items: center; gap: 12px; margin-top: 24px; }
+.home-profile-avatar { width: 44px; height: 44px; flex-shrink: 0; font-weight: 600; }
+.home-profile-heading > div { min-width: 0; }
+.home-profile-heading h2 { font-size: 18px; overflow-wrap: anywhere; }
+.home-profile-heading h2 span { margin-left: 4px; font-size: 12px; font-weight: 400; color: var(--muted); }
+.home-profile-heading p { margin-top: 5px; font-size: 11px; color: var(--muted); }
+.home-records { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); margin: 24px 0 0; padding-top: 20px; border-top: 1px solid var(--border); text-align: center; }
+.home-records dt { color: var(--muted); font-size: 10px; }
+.home-records dd { margin: 9px 0 0; font-size: 24px; font-weight: 650; font-variant-numeric: tabular-nums; }
+.home-records > div + div { border-left: 1px solid var(--border); }
+.home-records > div:nth-child(2) dd { color: var(--accent); }
+.home-records .home-win-rate { grid-column: 1 / -1; display: flex; align-items: center; justify-content: space-between; margin-top: 18px; padding-top: 14px; border-top: 1px solid var(--border); border-left: 0; }
+.home-records .home-win-rate dt { font-size: 12px; }
+.home-records .home-win-rate dd { margin: 0; color: var(--accent); font-size: 20px; }
+@media (max-width: 800px) {
+  .home-main { padding-top: 40px; }
+  .home-hero { gap: 28px; padding-inline: 0; }
+  .home-board-art { width: min(100%, 250px); padding: 20px; }
+  .home-lobby { gap: 16px; }
+  .home-play-card, .home-profile-card { padding: 24px; }
+}
+@media (max-width: 639px) {
+  .home-main { padding-top: 32px; }
+  .home-hero { grid-template-columns: 1fr; gap: 36px; padding-bottom: 36px; }
+  .home-intro h1 { font-size: 36px; }
+  .home-description { font-size: 13px; }
+  .home-board-art { width: 220px; }
+  .home-lobby { grid-template-columns: 1fr; }
+  .home-play-card h2 { font-size: 22px; }
+}
