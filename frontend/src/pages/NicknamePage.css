@@ -1,0 +1,21 @@
+.nickname-main { padding: 48px 16px 64px; }
+.nickname-card { width: min(100%, 460px); margin-inline: auto; padding: 36px; border: 1px solid var(--border); border-radius: 16px; background: var(--panel); box-shadow: 0 12px 40px #49392a05; }
+.nickname-heading { margin-bottom: 28px; text-align: center; }
+.nickname-heading h1 { margin: 18px 0 10px; font-size: 25px; letter-spacing: -1px; word-break: keep-all; }
+.nickname-heading p { font-size: 13px; color: var(--muted); line-height: 1.7; }
+.nickname-form { display: grid; gap: 19px; }
+.nickname-field { display: grid; gap: 8px; }
+.nickname-field label { font-size: 12px; font-weight: 600; }
+.nickname-field input { width: 100%; min-width: 0; min-height: 46px; padding: 12px; border: 1px solid var(--border); border-radius: 7px; background: var(--panel); color: var(--ink); font: inherit; font-size: 14px; }
+.nickname-field input::placeholder { color: #a29789; font-size: 12px; }
+.nickname-hint { font-size: 11px; line-height: 1.7; color: var(--muted); word-break: keep-all; }
+.nickname-policy { padding: 14px 16px; border-radius: 8px; background: var(--accent-soft); color: var(--accent); font-size: 12px; line-height: 1.8; word-break: keep-all; }
+.nickname-submit { min-height: 48px; margin-top: 5px; font-size: 14px; font-weight: 600; }
+.nickname-submit:hover { filter: brightness(.95); }
+.nickname-submit-message { padding: 12px; border-radius: 7px; background: var(--accent-soft); color: var(--accent); font-size: 11px; line-height: 1.7; overflow-wrap: anywhere; }
+@media (max-width: 639px) {
+  .nickname-main { padding: 24px 16px 40px; }
+  .nickname-card { padding: 28px 22px; }
+  .nickname-heading h1 { font-size: 23px; }
+  .nickname-field input { font-size: 16px; }
+}

@@ -1,0 +1,11 @@
+.matchmaking-card { display: flex; flex-direction: column; }
+.matchmaking-card .home-card-heading { min-height: 24px; }
+.matchmaking-badge { padding: 4px 9px; border-radius: 20px; background: var(--accent-soft); color: var(--accent); font-size: 10px; font-weight: 600; }
+.matchmaking-status { flex: 1; }
+.matchmaking-status p { color: var(--muted); font-size: 12px; line-height: 1.9; word-break: keep-all; }
+.matchmaking-waiting { display: flex; align-items: center; gap: 9px; margin-top: 18px; color: var(--accent); font-size: 12px; }
+.matchmaking-spinner { width: 15px; height: 15px; flex-shrink: 0; border: 2px solid var(--accent-soft); border-top-color: var(--accent); border-radius: 50%; animation: matchmaking-spin 1s linear infinite; }
+@keyframes matchmaking-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .matchmaking-spinner { animation: none; }
+}
