@@ -9,6 +9,8 @@ import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.context.annotation.Import;
 
+import io.github.dorgyuk.omgo.user.exception.NicknameAlreadyExistsException;
+
 import java.util.Locale;
 import java.util.UUID;
 
@@ -38,7 +40,7 @@ class UserServiceTest {
         String googleId = "test-" + UUID.randomUUID();
 
         // 실행
-        User registeredUser = userService.register(nickname, googleId);
+        User registeredUser = userService.registerWithGoogle(nickname, googleId);
         Long registeredId = registeredUser.getId();
         entityManager.flush();
         entityManager.clear();
@@ -66,8 +68,8 @@ class UserServiceTest {
         long countBefore = userRepository.count();
 
         // 실행 및 검증
-        assertThrows(DuplicateNicknameException.class,
-                () -> userService.register(requestedNickname, newGoogleId));
+        assertThrows(NicknameAlreadyExistsException.class,
+                () -> userService.registerWithGoogle(requestedNickname, newGoogleId));
 
         entityManager.flush();
         entityManager.clear();

@@ -5,6 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.github.dorgyuk.omgo.user.exception.NicknameAlreadyExistsException;
+
 /**
  * 사용자 등록과 닉네임 중복 검사를 담당한다.
  */
@@ -24,25 +26,16 @@ public class UserService {
      * @param nickname 사용자가 확정한 닉네임
      * @param googleId 서버에서 Google 인증으로 확인한 사용자 식별자
      * @return 저장한 사용자
-     * @throws DuplicateNicknameException 대소문자를 무시하고 같은 닉네임이 이미 있는 경우
+     * @throws NicknameAlreadyExistsException 대소문자를 무시하고 같은 닉네임이 이미 있는 경우
      */
     @Transactional
-    public User register(String nickname, String googleId) {
-        validate(nickname);
+    public User registerWithGoogle(String nickname, String googleId) {
+        
+        
+        if (userRepository.existsByNicknameIgnoreCase(nickname)) {
+            throw new NicknameAlreadyExistsException();
+        }
         
         return userRepository.save(new User(nickname, googleId));
-    }
-    
-    /**
-     * 영문 대소문자를 구분하지 않고 닉네임 중복 여부를 검사한다.
-     * 닉네임 길이나 허용 문자 등 형식은 검사하지 않는다.
-     *
-     * @param nickname 중복을 확인할 닉네임
-     * @throws DuplicateNicknameException 같은 닉네임이 이미 있는 경우
-     */
-    public void validate(String nickname) {
-        if (userRepository.existsByNicknameIgnoreCase(nickname)) {
-            throw new DuplicateNicknameException();
-        }
     }
 }
