@@ -32,4 +32,11 @@ public interface UserRepository extends JpaRepository<User, Long> {
      * @return 같은 닉네임의 사용자가 존재하면 true
      */
     boolean existsByNicknameIgnoreCase(String nickname);
+    /**
+     * 이메일을 대소문자 구분 없이 사용하는 사용자가 있는지 확인한다.
+     * 
+     * @param email 대소문자를 구분하지 않고 중복을 확인할 이메일
+     * @return 같은 이메일의 사용자가 존재하면 true
+     */
+    boolean existsByEmailIgnoreCase(String email);
 }

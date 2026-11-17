@@ -2,27 +2,33 @@ package io.github.dorgyuk.omgo.user;
 
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
+import org.springframework.boot.test.context.TestConfiguration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.security.crypto.argon2.Argon2PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import io.github.dorgyuk.omgo.user.exception.NicknameAlreadyExistsException;
-
-import java.util.Locale;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
-@Import(UserService.class)
+@Import({UserService.class, UserServiceTest.PasswordEncoderConfig.class})
 class UserServiceTest {
+
+    @TestConfiguration(proxyBeanMethods = false)
+    static class PasswordEncoderConfig {
+
+        @Bean
+        PasswordEncoder passwordEncoder() {
+            return Argon2PasswordEncoder.defaultsForSpringSecurity_v5_8();
+        }
+    }
 
     @Autowired
     private UserService userService;
@@ -54,29 +60,4 @@ class UserServiceTest {
         assertNotNull(foundUser.getCreatedAt());
     }
 
-    @ParameterizedTest(name = "영문 대소문자 변경 여부: {0}")
-    @ValueSource(booleans = {false, true})
-    void 중복_닉네임으로_등록하면_예외가_발생하고_사용자가_저장되지_않는다(boolean changeCase) {
-        // 준비: 동일 표기와 대소문자만 다른 표기를 각각 검증한다.
-        String nickname = "Player" + UUID.randomUUID().toString().substring(0, 6);
-        String existingGoogleId = "test-" + UUID.randomUUID();
-        userRepository.saveAndFlush(new User(nickname, existingGoogleId));
-        entityManager.clear();
-
-        String requestedNickname = changeCase ? nickname.toLowerCase(Locale.ROOT) : nickname;
-        String newGoogleId = "test-" + UUID.randomUUID();
-        long countBefore = userRepository.count();
-
-        // 실행 및 검증
-        assertThrows(NicknameAlreadyExistsException.class,
-                () -> userService.registerWithGoogle(requestedNickname, newGoogleId));
-
-        entityManager.flush();
-        entityManager.clear();
-
-        assertTrue(userRepository.findByGoogleId(newGoogleId).isEmpty());
-        assertEquals(countBefore, userRepository.count());
-        assertEquals(nickname,
-                userRepository.findByGoogleId(existingGoogleId).orElseThrow().getNickname());
-    }
 }

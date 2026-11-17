@@ -1,4 +1,4 @@
-package io.github.dorgyuk.omgo.user.dto;
+package io.github.dorgyuk.omgo.auth.dto;
 
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -15,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-class NicknameRequestTest {
+class GoogleSignupRequestTest {
 
     private static ValidatorFactory factory;
     private static Validator validator;
@@ -34,7 +34,7 @@ class NicknameRequestTest {
     @Test
     void 어노테이션_검증은_정상적인_한글_닉네임을_허용한다() {
         // 준비
-        var request = new NicknameRequest("바둑왕");
+        var request = new GoogleSignupRequest("바둑왕");
 
         // 실행
         var violations = validator.validate(request);
@@ -46,7 +46,7 @@ class NicknameRequestTest {
     @Test
     void 어노테이션_검증은_정상적인_영문_닉네임을_허용한다() {
         // 준비
-        var request = new NicknameRequest("Player");
+        var request = new GoogleSignupRequest("Player");
 
         // 실행
         var violations = validator.validate(request);
@@ -65,7 +65,7 @@ class NicknameRequestTest {
     void 어노테이션_검증은_닉네임_길이가_2에서_12일_때만_허용한다(int length, boolean expected) {
         // 준비
         String nickname = "a".repeat(length);
-        var request = new NicknameRequest(nickname);
+        var request = new GoogleSignupRequest(nickname);
 
         // 실행
         var violations = validator.validate(request);
@@ -78,7 +78,7 @@ class NicknameRequestTest {
     @ValueSource(strings = {"123", "바둑Player1"})
     void 어노테이션_검증은_숫자와_허용_문자가_혼합된_닉네임을_허용한다(String nickname) {
         // 준비
-        var request = new NicknameRequest(nickname);
+        var request = new GoogleSignupRequest(nickname);
 
         // 실행
         var violations = validator.validate(request);
@@ -91,7 +91,7 @@ class NicknameRequestTest {
     @ValueSource(strings = {"바둑 왕", "바둑!", "ㄱㄴ"})
     void 어노테이션_검증은_허용하지_않는_문자가_포함된_닉네임을_거부한다(String nickname) {
         // 준비
-        var request = new NicknameRequest(nickname);
+        var request = new GoogleSignupRequest(nickname);
 
         // 실행
         var violations = validator.validate(request);
@@ -104,7 +104,7 @@ class NicknameRequestTest {
     @NullAndEmptySource
     void 어노테이션_검증은_null과_빈_닉네임을_거부한다(String nickname) {
         // 준비
-        var request = new NicknameRequest(nickname);
+        var request = new GoogleSignupRequest(nickname);
 
         // 실행
         var violations = validator.validate(request);

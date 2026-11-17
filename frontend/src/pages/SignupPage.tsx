@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react'
 import type { SubmitEvent } from 'react'
 import { Link } from 'react-router'
+import { signup } from '../api/auth'
 import './SignupPage.css'
 
 export default function SignupPage() {
@@ -8,7 +9,7 @@ export default function SignupPage() {
   const [submitMessage, setSubmitMessage] = useState('')
   const confirmationRef = useRef<HTMLInputElement>(null)
 
-  function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
+  async function handleSubmit(event: SubmitEvent<HTMLFormElement>) {
     event.preventDefault()
     setSubmitMessage('')
     const values = new FormData(event.currentTarget)
@@ -20,7 +21,17 @@ export default function SignupPage() {
     }
 
     setPasswordError('')
-    setSubmitMessage('아직 회원가입을 처리할 수 없습니다. 가입 기능을 준비 중이에요.')
+
+    const email = String(values.get('email') ?? '')
+    const password = String(values.get('password') ?? '')
+    const nickname = String(values.get('nickname') ?? '')
+
+    try {
+      await signup({ email, password, nickname })
+      setSubmitMessage('회원가입이 완료되었습니다.')
+    } catch (error) {
+      setSubmitMessage('회원가입에 실패했습니다.')
+    }
   }
 
   function clearFeedback() {
@@ -72,7 +83,7 @@ export default function SignupPage() {
           Google 계정으로 로그인
         </button>
 
-        <div className="signup-login">이미 계정이 있나요? <Link to="/signin">로그인</Link></div>
+        <div className="signup-login">이미 계정이 있나요? <Link to="/login">로그인</Link></div>
       </section>
     </main>
   )

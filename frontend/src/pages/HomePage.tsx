@@ -54,7 +54,7 @@ export default function HomePage({ member }: HomePageProps) {
             </div>
             <h2 id="play-title">첫 한 수를 시작해 보세요</h2>
             <p>로그인하고 나면 바로 대국 상대를 찾을 수 있어요.</p>
-            <Link className="primary-button home-play-button" to="/signin">로그인하고 대국 시작하기<span aria-hidden="true">↗</span></Link>
+            <Link className="primary-button home-play-button" to="/login">로그인하고 대국 시작하기<span aria-hidden="true">↗</span></Link>
           </section>
         )}
 

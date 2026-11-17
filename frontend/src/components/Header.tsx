@@ -16,7 +16,7 @@ export default function Header({ showAccount = false, nickname }: HeaderProps) {
               <><span className="account-avatar" aria-hidden="true">오</span><span>{nickname}</span></>
             ) : (
               <>
-                <Link className="header-login" to="/signin">로그인</Link>
+                <Link className="header-login" to="/login">로그인</Link>
                 <Link className="header-signup" to="/signup">회원가입</Link>
               </>
             )}

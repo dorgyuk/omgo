@@ -31,13 +31,25 @@ public class User {
     @Column(unique = true, nullable = false, length = 12)
     private String nickname;
 
-    @Column(name = "google_id", nullable = false, unique = true)
+    @Column(name = "google_id", unique = true)
     private String googleId;
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     private java.time.Instant createdAt;
 
+    @Column
+    private String email;
+
+    @Column
+    private String hashedPassword;
+
+    public User(String email, String hashedPassword, String nickname) {
+        this.email = email;
+        this.hashedPassword = hashedPassword;
+        this.nickname = nickname;
+    }
+    
     /**
      * 신규 사용자 정보를 생성한다. DB 저장은 수행하지 않는다.
      *

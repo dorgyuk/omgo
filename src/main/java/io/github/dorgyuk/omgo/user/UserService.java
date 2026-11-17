@@ -2,10 +2,12 @@ package io.github.dorgyuk.omgo.user;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.github.dorgyuk.omgo.user.exception.NicknameAlreadyExistsException;
+import io.github.dorgyuk.omgo.global.exception.AppException;
+import io.github.dorgyuk.omgo.global.exception.ErrorCode;
 
 /**
  * 사용자 등록과 닉네임 중복 검사를 담당한다.
@@ -15,6 +17,34 @@ import io.github.dorgyuk.omgo.user.exception.NicknameAlreadyExistsException;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+
+    /**
+     * 이메일 중복, 닉네임 중복을 확인하고 사용자를 저장한다.
+     * 
+     * <p>
+     * @param email 사용자가 확정한 이메일
+     * @param password
+     * @param nickname
+     * @return 저장한 사용자
+     * @throws AppException EMAIL_ALREADY_EXISTS: 이메일이 이미 존재하는 경우
+     * @throws AppException NICKNAME_ALREADY_EXISTS: 닉네임이 이미 존재하는 경우
+     */
+    @Transactional 
+    public User registerWithEmail(String email, String password, String nickname) {
+        // 이메일 검증
+        if (userRepository.existsByEmailIgnoreCase(email)) {
+            throw new AppException(ErrorCode.EMAIL_ALREADY_EXISTS);
+        }
+        // 닉네임 검증 
+        if (userRepository.existsByNicknameIgnoreCase(nickname)) {
+            throw new AppException(ErrorCode.NICKNAME_ALREADY_EXISTS);
+        }
+        // 비밀번호 해싱
+        String hashedPassword = passwordEncoder.encode(password);
+
+        return userRepository.save(new User(email, hashedPassword, nickname));
+    }
 
     /**
      * 닉네임 중복을 확인한 뒤 사용자를 저장한다.
@@ -26,14 +56,14 @@ public class UserService {
      * @param nickname 사용자가 확정한 닉네임
      * @param googleId 서버에서 Google 인증으로 확인한 사용자 식별자
      * @return 저장한 사용자
-     * @throws NicknameAlreadyExistsException 대소문자를 무시하고 같은 닉네임이 이미 있는 경우
+     * @throws AppException NICKNAME_ALREADY_EXISTS: 대소문자를 무시하고 같은 닉네임이 이미 있는 경우
      */
     @Transactional
     public User registerWithGoogle(String nickname, String googleId) {
         
         
         if (userRepository.existsByNicknameIgnoreCase(nickname)) {
-            throw new NicknameAlreadyExistsException();
+            throw new AppException(ErrorCode.NICKNAME_ALREADY_EXISTS);
         }
         
         return userRepository.save(new User(nickname, googleId));

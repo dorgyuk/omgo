@@ -1,4 +1,4 @@
-package io.github.dorgyuk.omgo.exception;
+package io.github.dorgyuk.omgo.global.exception;
 
 import lombok.Getter;
 
