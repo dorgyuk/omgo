@@ -2,7 +2,6 @@ package io.github.dorgyuk.omgo.user;
 
 import java.time.Instant;
 
-import org.aspectj.internal.lang.annotation.ajcDeclareAnnotation;
 import org.hibernate.annotations.CreationTimestamp;
 
 import jakarta.persistence.Column;
@@ -36,7 +35,7 @@ public class User {
 
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
-    private java.time.Instant createdAt;
+    private Instant createdAt;
 
     @Column
     private String email;
