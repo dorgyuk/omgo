@@ -7,50 +7,45 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-
-@RestControllerAdvice 
+@RestControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler (AppException.class)
-    public ResponseEntity<ErrorResponse> handleAppException(
-        AppException exception
-    ) {
-        ErrorCode errorCode = exception.getErrorCode();
-        
-        ErrorResponse response = new ErrorResponse(
-            errorCode,
-            exception.getMessage()
-        );
+	@ExceptionHandler(AppException.class)
+	public ResponseEntity<ErrorResponse> handleAppException(
+		AppException exception) {
+		ErrorCode errorCode = exception.getErrorCode();
 
-        return ResponseEntity
-                .status(errorCode.getStatus())
-                .body(response);
-    }
+		ErrorResponse response = new ErrorResponse(
+			errorCode,
+			exception.getMessage());
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ErrorResponse> handleValidation(
-        MethodArgumentNotValidException exception
-    ) {
-        FieldError fieldError = exception.getBindingResult().getFieldError();
-        String message = (fieldError != null)
-                ? fieldError.getDefaultMessage()
-                : ErrorCode.INVALID_REQUEST.getMessage();
+		return ResponseEntity
+			.status(errorCode.getStatus())
+			.body(response);
+	}
 
-        ErrorCode errorCode = ErrorCode.INVALID_REQUEST;
+	@ExceptionHandler(MethodArgumentNotValidException.class)
+	public ResponseEntity<ErrorResponse> handleValidation(
+		MethodArgumentNotValidException exception) {
+		FieldError fieldError = exception.getBindingResult().getFieldError();
+		String message = (fieldError != null)
+			? fieldError.getDefaultMessage()
+			: ErrorCode.INVALID_REQUEST.getMessage();
 
-        return ResponseEntity
-                .status(errorCode.getStatus())
-                .body(new ErrorResponse(errorCode, message));
-    }
+		ErrorCode errorCode = ErrorCode.INVALID_REQUEST;
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ErrorResponse> handleNotReadable(
-        HttpMessageNotReadableException exception
-    ) {
-        ErrorCode errorCode = ErrorCode.INVALID_REQUEST;
+		return ResponseEntity
+			.status(errorCode.getStatus())
+			.body(new ErrorResponse(errorCode, message));
+	}
 
-        return ResponseEntity
-                .status(errorCode.getStatus())
-                .body(new ErrorResponse(errorCode, errorCode.getMessage()));
-    }
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<ErrorResponse> handleNotReadable(
+		HttpMessageNotReadableException exception) {
+		ErrorCode errorCode = ErrorCode.INVALID_REQUEST;
+
+		return ResponseEntity
+			.status(errorCode.getStatus())
+			.body(new ErrorResponse(errorCode, errorCode.getMessage()));
+	}
 }

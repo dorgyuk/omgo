@@ -19,44 +19,44 @@ import lombok.NoArgsConstructor;
  * 닉네임은 표시할 때 사용할 영문 대소문자를 그대로 저장한다.
  */
 @Getter
-@NoArgsConstructor(access = AccessLevel.PROTECTED) 
-@Entity 
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Entity
 @Table(name = "users")
 public class User {
-    @Id 
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	private Long id;
 
-    @Column(unique = true, nullable = false, length = 12)
-    private String nickname;
+	@Column(unique = true, nullable = false, length = 12)
+	private String nickname;
 
-    @Column(name = "google_id", unique = true)
-    private String googleId;
+	@Column(name = "google_id", unique = true)
+	private String googleId;
 
-    @CreationTimestamp
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
+	@CreationTimestamp
+	@Column(name = "created_at", nullable = false, updatable = false)
+	private Instant createdAt;
 
-    @Column
-    private String email;
+	@Column
+	private String email;
 
-    @Column
-    private String hashedPassword;
+	@Column
+	private String hashedPassword;
 
-    public User(String email, String hashedPassword, String nickname) {
-        this.email = email;
-        this.hashedPassword = hashedPassword;
-        this.nickname = nickname;
-    }
-    
-    /**
-     * 신규 사용자 정보를 생성한다. DB 저장은 수행하지 않는다.
-     *
-     * @param nickname 사용자가 확정한 닉네임
-     * @param googleId Google 인증으로 확인한 사용자 식별자
-     */
-    public User(String nickname, String googleId) {
-        this.nickname = nickname;
-        this.googleId = googleId;
-    }
+	public User(String email, String hashedPassword, String nickname) {
+		this.email = email;
+		this.hashedPassword = hashedPassword;
+		this.nickname = nickname;
+	}
+
+	/**
+	 * 신규 사용자 정보를 생성한다. DB 저장은 수행하지 않는다.
+	 *
+	 * @param nickname 사용자가 확정한 닉네임
+	 * @param googleId Google 인증으로 확인한 사용자 식별자
+	 */
+	public User(String nickname, String googleId) {
+		this.nickname = nickname;
+		this.googleId = googleId;
+	}
 }

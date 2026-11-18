@@ -17,13 +17,13 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
 
-    private final UserService userService;
+	private final UserService userService;
 
-    // TODO: 명세의 응답(AuthResponse 본문 + refreshToken 쿠키)은 토큰 발급 구현 시 반영
-    @PostMapping("/signup")
-    public ResponseEntity<Void> signup(@Valid @RequestBody SignupRequest request) {
-        userService.registerWithEmail(request.email(), request.password(), request.nickname());
+	// TODO: 명세의 응답(AuthResponse 본문 + refreshToken 쿠키)은 토큰 발급 구현 시 반영
+	@PostMapping("/signup")
+	public ResponseEntity<Void> signup(@Valid @RequestBody SignupRequest request) {
+		userService.registerWithEmail(request.email(), request.password(), request.nickname());
 
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
+		return ResponseEntity.status(HttpStatus.CREATED).build();
+	}
 }

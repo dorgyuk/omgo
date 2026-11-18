@@ -1,8 +1,8 @@
 package io.github.dorgyuk.omgo.game;
 
 public enum MoveEvaluation {
-    LEGAL,
-    WIN,
-    FORBIDDEN,
-    DRAW,
+	LEGAL,
+	WIN,
+	FORBIDDEN,
+	DRAW,
 }
