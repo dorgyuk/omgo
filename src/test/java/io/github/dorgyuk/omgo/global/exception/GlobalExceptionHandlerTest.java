@@ -38,4 +38,30 @@ class GlobalExceptionHandlerTest {
                 .andExpect(jsonPath("$.errorCode").value("INVALID_REQUEST"))
                 .andExpect(jsonPath("$.message").value("올바른 이메일 형식을 입력해주세요."));
     }
+
+    @Test
+    void 요청_본문이_올바른_JSON이_아니면_400과_INVALID_REQUEST로_응답한다() throws Exception {
+        // 준비: 닫는 괄호가 빠진 잘못된 JSON
+        String body = """
+                {"email": "user@example.com", "password": "abcd1234", "nickname": "오목유저"
+                """;
+
+        // 실행 & 검증
+        mockMvc.perform(post("/api/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(body))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value("INVALID_REQUEST"))
+                .andExpect(jsonPath("$.message").value("요청 값의 형식이 올바르지 않습니다."));
+    }
+
+    @Test
+    void 요청_본문이_비어_있으면_400과_INVALID_REQUEST로_응답한다() throws Exception {
+        // 실행 & 검증: 본문 없이 호출
+        mockMvc.perform(post("/api/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.errorCode").value("INVALID_REQUEST"))
+                .andExpect(jsonPath("$.message").value("요청 값의 형식이 올바르지 않습니다."));
+    }
 }
