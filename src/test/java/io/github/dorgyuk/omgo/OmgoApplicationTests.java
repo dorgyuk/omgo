@@ -1,5 +1,7 @@
 package io.github.dorgyuk.omgo;
 
+import java.time.Clock;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -10,6 +12,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import io.github.dorgyuk.omgo.global.config.PasswordEncoderConfig;
 import io.github.dorgyuk.omgo.global.exception.GlobalExceptionHandler;
 import io.github.dorgyuk.omgo.auth.AuthController;
+import io.github.dorgyuk.omgo.auth.token.JwtProvider;
 import io.github.dorgyuk.omgo.user.UserRepository;
 import io.github.dorgyuk.omgo.user.UserService;
 
@@ -23,7 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
         "spring.datasource.driver-class-name=org.h2.Driver",
         "spring.datasource.username=sa",
         "spring.datasource.password=",
-        "spring.jpa.hibernate.ddl-auto=create-drop"
+        "spring.jpa.hibernate.ddl-auto=create-drop",
+        // .env가 없는 환경(CI 등)에서도 컨텍스트가 뜨도록 테스트용 키를 지정한다.
+        "jwt.secret=test-secret-key-for-omgo-application-tests-0123"
 })
 class OmgoApplicationTests {
 
@@ -68,6 +73,23 @@ class OmgoApplicationTests {
         assertTrue(hash.startsWith("$argon2id$"));
         assertTrue(encoder.matches(password, hash));
         assertFalse(encoder.matches("wrong1234!", hash));
+    }
+
+    @Test
+    void JwtProvider에_스프링이_관리하는_Clock이_주입된다() {
+        JwtProvider jwtProvider = context.getBean(JwtProvider.class);
+
+        assertSame(context.getBean(Clock.class),
+                ReflectionTestUtils.getField(jwtProvider, "clock"));
+    }
+
+    @Test
+    void 등록된_JwtProvider_빈으로_액세스_토큰을_발급하고_읽을_수_있다() {
+        JwtProvider jwtProvider = context.getBean(JwtProvider.class);
+
+        String token = jwtProvider.createAccessToken(42L);
+
+        assertEquals(42L, jwtProvider.parse(token).userId());
     }
 
 }
