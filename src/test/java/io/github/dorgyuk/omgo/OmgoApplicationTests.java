@@ -22,12 +22,7 @@ import static org.junit.jupiter.api.Assertions.assertSame;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @SpringBootTest(properties = {
-	"spring.datasource.url=jdbc:h2:mem:bean-injection;DB_CLOSE_DELAY=-1",
-	"spring.datasource.driver-class-name=org.h2.Driver",
-	"spring.datasource.username=sa",
-	"spring.datasource.password=",
-	"spring.jpa.hibernate.ddl-auto=create-drop",
-	// .env가 없는 환경(CI 등)에서도 컨텍스트가 뜨도록 테스트용 키를 지정한다.
+	// .env에 키가 없어도 컨텍스트가 뜨도록 테스트용 키를 지정한다.
 	"jwt.secret=test-secret-key-for-omgo-application-tests-0123"
 })
 class OmgoApplicationTests {
