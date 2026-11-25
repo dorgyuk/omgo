@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.github.dorgyuk.omgo.auth.dto.SignupRequest;
-import io.github.dorgyuk.omgo.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 
@@ -17,12 +16,12 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public class AuthController {
 
-	private final UserService userService;
+	private final AuthService authService;
 
-	// TODO: 명세의 응답(AuthResponse 본문 + refreshToken 쿠키)은 토큰 발급 구현 시 반영
+	// TODO: 명세의 응답(AuthResponse 본문 + refreshToken 쿠키)은 AuthController TDD에서 반영
 	@PostMapping("/signup")
 	public ResponseEntity<Void> signup(@Valid @RequestBody SignupRequest request) {
-		userService.registerWithEmail(request.email(), request.password(), request.nickname());
+		authService.signup(request.email(), request.password(), request.nickname());
 
 		return ResponseEntity.status(HttpStatus.CREATED).build();
 	}

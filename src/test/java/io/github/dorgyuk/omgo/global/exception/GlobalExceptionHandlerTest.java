@@ -12,7 +12,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import io.github.dorgyuk.omgo.auth.AuthController;
-import io.github.dorgyuk.omgo.user.UserService;
+import io.github.dorgyuk.omgo.auth.AuthService;
 
 @WebMvcTest(AuthController.class)
 class GlobalExceptionHandlerTest {
@@ -21,7 +21,7 @@ class GlobalExceptionHandlerTest {
 	private MockMvc mockMvc;
 
 	@MockitoBean
-	private UserService userService;
+	private AuthService authService;
 
 	@Test
 	void 요청_값_검증에_실패하면_400과_INVALID_REQUEST_형식으로_응답한다() throws Exception {

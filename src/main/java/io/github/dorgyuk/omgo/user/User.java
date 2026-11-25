@@ -41,11 +41,11 @@ public class User {
 	private String email;
 
 	@Column
-	private String hashedPassword;
+	private String passwordHash;
 
-	public User(String email, String hashedPassword, String nickname) {
+	public User(String email, String passwordHash, String nickname) {
 		this.email = email;
-		this.hashedPassword = hashedPassword;
+		this.passwordHash = passwordHash;
 		this.nickname = nickname;
 	}
 

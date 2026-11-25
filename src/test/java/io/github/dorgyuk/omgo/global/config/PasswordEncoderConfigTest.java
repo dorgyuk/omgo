@@ -17,21 +17,21 @@ class PasswordEncoderConfigTest {
 		String password = "abcd1234!";
 
 		// 실행
-		String hashedPassword = passwordEncoder.encode(password);
+		String passwordHash = passwordEncoder.encode(password);
 
 		// 검증
-		assertNotEquals(password, hashedPassword);
-		assertTrue(hashedPassword.startsWith("$argon2id$"));
-		assertTrue(passwordEncoder.matches(password, hashedPassword));
+		assertNotEquals(password, passwordHash);
+		assertTrue(passwordHash.startsWith("$argon2id$"));
+		assertTrue(passwordEncoder.matches(password, passwordHash));
 	}
 
 	@Test
 	void 다른_비밀번호는_해시와_일치하지_않는다() {
 		// 준비
-		String hashedPassword = passwordEncoder.encode("abcd1234!");
+		String passwordHash = passwordEncoder.encode("abcd1234!");
 
 		// 실행
-		boolean matches = passwordEncoder.matches("wrong1234!", hashedPassword);
+		boolean matches = passwordEncoder.matches("wrong1234!", passwordHash);
 
 		// 검증
 		assertFalse(matches);

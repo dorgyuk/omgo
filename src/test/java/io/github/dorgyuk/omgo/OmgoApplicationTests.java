@@ -12,6 +12,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import io.github.dorgyuk.omgo.global.config.PasswordEncoderConfig;
 import io.github.dorgyuk.omgo.global.exception.GlobalExceptionHandler;
 import io.github.dorgyuk.omgo.auth.AuthController;
+import io.github.dorgyuk.omgo.auth.AuthService;
 import io.github.dorgyuk.omgo.auth.token.JwtProvider;
 import io.github.dorgyuk.omgo.user.UserRepository;
 import io.github.dorgyuk.omgo.user.UserService;
@@ -43,19 +44,9 @@ class OmgoApplicationTests {
 	@Test
 	void 컨트롤러에_스프링이_관리하는_서비스가_주입된다() {
 		AuthController controller = context.getBean(AuthController.class);
-		UserService service = context.getBean(UserService.class);
+		AuthService service = context.getBean(AuthService.class);
 
-		assertSame(service, ReflectionTestUtils.getField(controller, "userService"));
-	}
-
-	@Test
-	void 서비스에_스프링이_관리하는_리포지토리와_인코더가_주입된다() {
-		UserService service = context.getBean(UserService.class);
-
-		assertSame(context.getBean(UserRepository.class),
-			ReflectionTestUtils.getField(service, "userRepository"));
-		assertSame(context.getBean(PasswordEncoder.class),
-			ReflectionTestUtils.getField(service, "passwordEncoder"));
+		assertSame(service, ReflectionTestUtils.getField(controller, "authService"));
 	}
 
 	@Test
