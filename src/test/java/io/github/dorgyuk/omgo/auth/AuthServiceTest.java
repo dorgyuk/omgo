@@ -99,6 +99,52 @@ class AuthServiceTest {
 			.isEqualTo(ErrorCode.NICKNAME_ALREADY_EXISTS);
 	}
 
+	// ===== login =====
+
+	@Test
+	void 올바른_이메일과_비밀번호로_로그인하면_해당_사용자의_토큰을_발급한다() {
+		String email = uniqueEmail();
+		Long userId = authService.signup(email, PASSWORD, uniqueNickname()).user().getId();
+		entityManager.flush();
+		entityManager.clear();
+
+		AuthResult result = authService.login(email, PASSWORD);
+		entityManager.flush();
+
+		assertThat(result.user().getId()).isEqualTo(userId);
+		assertIssuedFor(result, userId);
+	}
+
+	@Test
+	void 이메일은_대소문자를_구분하지_않고_로그인한다() {
+		String email = uniqueEmail();
+		Long userId = authService.signup(email, PASSWORD, uniqueNickname()).user().getId();
+
+		AuthResult result = authService.login(email.toUpperCase(), PASSWORD);
+
+		assertThat(result.user().getId()).isEqualTo(userId);
+	}
+
+	@Test
+	void 비밀번호가_틀리면_INVALID_CREDENTIALS() {
+		String email = uniqueEmail();
+		authService.signup(email, PASSWORD, uniqueNickname());
+
+		assertThatThrownBy(() -> authService.login(email, "wrong" + PASSWORD))
+			.isInstanceOf(AppException.class)
+			.extracting("errorCode")
+			.isEqualTo(ErrorCode.INVALID_CREDENTIALS);
+	}
+
+	@Test
+	void 가입하지_않은_이메일이면_INVALID_CREDENTIALS() {
+		// 이메일 존재 여부가 드러나지 않도록 비밀번호 불일치와 같은 오류를 반환한다.
+		assertThatThrownBy(() -> authService.login(uniqueEmail(), PASSWORD))
+			.isInstanceOf(AppException.class)
+			.extracting("errorCode")
+			.isEqualTo(ErrorCode.INVALID_CREDENTIALS);
+	}
+
 	// ===== helpers =====
 
 	private void assertIssuedFor(AuthResult result, Long userId) {

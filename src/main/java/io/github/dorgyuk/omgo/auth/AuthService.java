@@ -46,8 +46,21 @@ public class AuthService {
 		return new AuthResult(user, accessToken, refreshToken);
 	}
 
-	// TODO: TDD로 구현
+	@Transactional
 	public AuthResult login(String email, String password) {
-		throw new UnsupportedOperationException("아직 구현하지 않았습니다.");
+		// DB에서 유저 확인
+		User user = userRepository.findByEmailIgnoreCase(email)
+			.orElseThrow(() -> new AppException(ErrorCode.INVALID_CREDENTIALS));
+
+		// 비밀번호 검사
+		if (!passwordEncoder.matches(password, user.getPasswordHash())) {
+			throw new AppException(ErrorCode.INVALID_CREDENTIALS);
+		}
+
+		// 토큰 생성
+		String accessToken = jwtProvider.createAccessToken(user.getId());
+		String refreshToken = refreshTokenService.issue(user);
+
+		return new AuthResult(user, accessToken, refreshToken);
 	}
 }
