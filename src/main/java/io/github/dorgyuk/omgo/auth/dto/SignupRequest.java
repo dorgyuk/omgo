@@ -5,8 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
-public record SignupRequest(
 // @formatter:off
+public record SignupRequest(
 	@NotBlank(message = "이메일을 입력해주세요.")
 	@Email(message = "올바른 이메일 형식을 입력해주세요.")
 	String email,
@@ -26,6 +26,5 @@ public record SignupRequest(
 		message = "닉네임은 한글 완성형, 영문, 숫자만 사용할 수 있습니다."
 	)
 	String nickname
-	// @formatter:on
-) {
-}
+) {}
+// @formatter:on
